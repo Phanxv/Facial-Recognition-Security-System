@@ -162,4 +162,5 @@ cython_debug/
 # ignore dataset
 *dataset*
 *.tf
+*.h5
 test/

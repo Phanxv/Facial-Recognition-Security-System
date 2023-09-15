@@ -23,12 +23,18 @@ void  loop() {
       delay(1);
       pos-=10;
     }
+    else {
+      MG996R.writeMicroseconds(pos);
+    }
   }
   if(payload == "LEFT"){
     if(pos <= 3000){
       MG996R.writeMicroseconds(pos);
       delay(1);
       pos+=10;
+    }
+    else {
+      MG996R.writeMicroseconds(pos);
     }
   }
 }
