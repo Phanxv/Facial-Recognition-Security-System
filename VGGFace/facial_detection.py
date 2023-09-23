@@ -2,7 +2,6 @@ import tensorflow as tf
 from tensorflow import keras
 from keras.models import load_model
 import cv2, queue, threading, time
-import serial
 
 class VideoCapture:
 
@@ -40,34 +39,15 @@ def image_preprocess(sample) :
     sample = tf.expand_dims(sample, 0)
     return sample
 
-arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=.1) #<-- edit port
-
-def servo_trigger(frame_w, x_pos, face_w) :
-    mid_point = x_pos + face_w/2
-    if mid_point < frame_w/2 - face_w :
-        #trigger turn left event placeholder (I'm too lazy rn.)
-        payload = "LEFT"
-        arduino.write(payload.encode())
-        print('LEFT')
-    elif mid_point > frame_w/2 + face_w :
-        payload = "RIGHT"
-        arduino.write(payload.encode())
-        print('RIGHT')
-    else :
-       #trigger stop event placeholder 
-       payload = "MID"
-       arduino.write(payload.encode())
-       print('MID')
-
 def main():
-    model_path = 'model/third_model_face.tf'
+    model_path = 'model/model_2023-09-16 15:58:18.683156.tf'
     print("\n [INFO] Loading Model")
     model = load_model(model_path)
     print("\n [INFO] Load Model complete")
 
     label = ['bus','elf','petch','unknown']
 
-    cap = VideoCapture(1)
+    cap = VideoCapture(-1)
     font = cv2.FONT_HERSHEY_SIMPLEX
     face_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
 
@@ -94,10 +74,9 @@ def main():
                 cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,255,0), 1)   
             else:
                 id = "UNKNOWN"
-                cv2.putText(img, str(id), (x+5,y-5), font, 1, (255,0,0), 2)
-                cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (255,0,0), 1)
-                cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,255,0), 1)  
-            servo_trigger(frame_w=frame_width, x_pos=x, face_w=w)   
+                cv2.putText(img, str(id), (x+5,y-5), font, 1, (0,0,255), 2)
+                cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (0,0,255), 1)
+                cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,0,255), 1)  
             
         cv2.imshow('camera',img)
         k = cv2.waitKey(10) & 0xff
