@@ -1,8 +1,7 @@
 numpy
-keras==2.13.1
+keras
 opencv_python==4.8.0.76
 pyserial==3.5
-tensorflow==2.9.0
 matplotlib
 keras-vggface
 keras_applications
