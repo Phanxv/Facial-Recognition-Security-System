@@ -48,7 +48,7 @@ def send_result_to_rx65n(payload) :
        
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = f'{dir_path}/model/model_2025-09-03_1756862707.101024.tf'
+    model_path = f'{dir_path}/model/model_2025-09-04_1756974610.074763.tf'
     print("\n [INFO] Loading Model")
     model = load_model(model_path)
     print("\n [INFO] Load Model complete")
@@ -69,15 +69,19 @@ def main():
             minNeighbors=5,     
             minSize=(10, 10)
         )
-        for (x,y,w,h) in faces:
+        echo = rx65n.read()
+        print(echo )
+        if len(faces) > 0 :
+          for (x,y,w,h) in faces:
             cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
             predictions = model.predict(image_preprocess(img[y:y+h,x:x+w]), verbose=0)
             id = predictions[0].argmax()
             confidence = predictions[0][predictions[0].argmax()] * 100
-            if (confidence > 75):
+            if (confidence > 90):
                 payload = str(int(id))
                 send_result_to_rx65n(payload)
-                cv2.putText(img, str(id), (x+5,y-5), font, 1, (0,255,0), 2)
+                name = label[id]
+                cv2.putText(img, str(name), (x+5,y-5), font, 1, (0,255,0), 2)
                 cv2.putText(img, str(confidence), (x+5,y+h-5), font, 0.5, (0,255,0), 1)
                 cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (0,255,0), 1)
                 cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,255,0), 1)   
@@ -87,7 +91,10 @@ def main():
                 send_result_to_rx65n(payload)
                 cv2.putText(img, str(id), (x+5,y-5), font, 1, (0,0,255), 2)
                 cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (0,0,255), 1)
-                cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,0,255), 1)  
+                cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,0,255), 1) 
+        else:
+          payload = 'x'
+          send_result_to_rx65n(payload)
         cv2.imshow('camera',img)
         k = cv2.waitKey(10) & 0xff
         if k == 27:

@@ -164,3 +164,4 @@ cython_debug/
 *.tf
 *.h5
 test/
+*.zip
