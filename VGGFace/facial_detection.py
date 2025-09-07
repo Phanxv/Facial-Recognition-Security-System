@@ -42,7 +42,7 @@ def image_preprocess(sample) :
 
 def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = f'{dir_path}/model/model_2025-09-03_1756862707.101024.tf'
+    model_path = f'{dir_path}/model/model_2025-09-07_1757229351.92675.tf'
     print("\n [INFO] Loading Model")
     model = load_model(model_path)
     print("\n [INFO] Load Model complete")
@@ -68,17 +68,11 @@ def main():
             predictions = model.predict(image_preprocess(img[y:y+h,x:x+w]), verbose=0)
             id = predictions[0].argmax()
             confidence = predictions[0][predictions[0].argmax()] * 100
-            if (confidence > 75):
-                id = label[id]
-                cv2.putText(img, str(id), (x+5,y-5), font, 1, (0,255,0), 2)
-                cv2.putText(img, str(confidence), (x+5,y+h-5), font, 0.5, (0,255,0), 1)
-                cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (0,255,0), 1)
-                cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,255,0), 1)   
-            else:
-                id = "UNKNOWN"
-                cv2.putText(img, str(id), (x+5,y-5), font, 1, (0,0,255), 2)
-                cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (0,0,255), 1)
-                cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,0,255), 1)  
+            id = label[id]
+            cv2.putText(img, str(id), (x+5,y-5), font, 1, (0,255,0), 2)
+            cv2.putText(img, str(confidence), (x+5,y+h-5), font, 0.5, (0,255,0), 1)
+            cv2.putText(img, str(f'x:{x} y:{y}'), (x+5,y+h+20), font, 0.5, (0,255,0), 1)
+            cv2.putText(img, str(f'w:{w} h:{h}'), (x+5,y+h+35), font, 0.5, (0,255,0), 1)   
             
         cv2.imshow('camera',img)
         k = cv2.waitKey(10) & 0xff
